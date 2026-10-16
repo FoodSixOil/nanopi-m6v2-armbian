@@ -7,12 +7,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: nanopi-m6v2-noble
+  group: nanopi-m6v2-noble-current
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build NanoPi M6V2 Ubuntu 24.04 GNOME
+    name: Build NanoPi M6V2 Ubuntu 24.04 GNOME Current
     runs-on: ubuntu-24.04
     timeout-minutes: 360
 
@@ -33,14 +33,15 @@ jobs:
           # Ubuntu 24.04 LTS
           armbian_release: "noble"
 
-          # Rockchip vendor 内核，硬件兼容性更好
-          armbian_kernel_branch: "vendor"
+          # Mainline/current 内核
+          armbian_kernel_branch: "current"
 
-          # GNOME 桌面
+          # GNOME 图形桌面
           armbian_ui: "gnome"
 
+          # 输出镜像、xz 压缩包和校验文件
           armbian_compress: "sha,img,xz"
 
-          # 编译完成后自动创建 Release
-          armbian_release_tag: "m6v2-noble-${{ github.run_number }}"
-          armbian_release_title: "NanoPi M6V2 Ubuntu 24.04"
+          # 编译完成后自动创建 GitHub Release
+          armbian_release_tag: "m6v2-noble-current-${{ github.run_number }}"
+          armbian_release_title: "NanoPi M6V2 Ubuntu 24.04 GNOME Current"
