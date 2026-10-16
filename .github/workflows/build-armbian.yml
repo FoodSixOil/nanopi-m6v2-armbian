@@ -25,7 +25,7 @@ jobs:
           armbian_target: "build"
 
           # 当前包含 NanoPi M6V2 支持的上游代码
-          armbian_branch: "refs/pull/10946/head"
+          armbian_branch: "main"
 
           # M6V2 使用统一的 FriendlyElec RK3588 镜像
           armbian_board: "friendlyelec-rk3588"
