@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build NanoPi M6V2 Ubuntu 24.04
+    name: Build NanoPi M6V2 Ubuntu 24.04 GNOME
     runs-on: ubuntu-24.04
     timeout-minutes: 360
 
@@ -36,8 +36,8 @@ jobs:
           # Rockchip vendor 内核，硬件兼容性更好
           armbian_kernel_branch: "vendor"
 
-          # 精简命令行镜像
-          armbian_ui: "minimal"
+          # GNOME 桌面
+          armbian_ui: "gnome"
 
           armbian_compress: "sha,img,xz"
 
