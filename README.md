@@ -1,0 +1,1 @@
+# nanopi-m6v2-armbian
