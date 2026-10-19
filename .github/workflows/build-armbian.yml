@@ -1,4 +1,4 @@
-name: Build NanoPi M6V2 Vendor Patched
+name: Build NanoPi M6V2 Armbian FriendlyELEC Vendor
 
 on:
   workflow_dispatch:
@@ -7,36 +7,68 @@ permissions:
   contents: write
 
 concurrency:
-  group: nanopi-m6v2-noble-vendor-patched
+  group: nanopi-m6v2-friendlyelec-vendor
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build NanoPi M6V2 Ubuntu 24.04 GNOME Vendor Patched
+    name: Build Armbian Noble GNOME with FriendlyELEC 6.1
     runs-on: ubuntu-24.04
     timeout-minutes: 360
 
     steps:
-      - name: Build patched Armbian vendor image
+      - name: Checkout customisations
+        uses: actions/checkout@v4
+        with:
+          path: custom
+          clean: false
+
+      - name: Prepare FriendlyELEC M6V2 kernel configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p custom/userpatches
+
+          curl -fL \
+            https://raw.githubusercontent.com/friendlyarm/kernel-rockchip/nanopi6-v6.1.y/arch/arm64/configs/nanopi6_linux_defconfig \
+            -o custom/userpatches/linux-rk35xx-vendor.config
+
+          test -s custom/userpatches/linux-rk35xx-vendor.config
+
+          grep -q '^CONFIG_ARCH_ROCKCHIP=y' \
+            custom/userpatches/linux-rk35xx-vendor.config
+
+          grep -q '^CONFIG_VENDOR_FRIENDLYELEC=y' \
+            custom/userpatches/linux-rk35xx-vendor.config
+
+          grep -q '^CONFIG_SND_SOC_ES8389=y' \
+            custom/userpatches/linux-rk35xx-vendor.config
+
+          echo "FriendlyELEC NanoPi6 kernel configuration prepared successfully."
+
+      - name: Build Armbian image
         uses: armbian/build@main
         with:
           armbian_token: ${{ secrets.GITHUB_TOKEN }}
           armbian_runner_clean: "yes"
           armbian_target: "build"
 
-          # 使用包含 ES8389 配置的 Armbian 构建 PR
-          armbian_branch: "refs/pull/10980/head"
-
+          armbian_branch: "main"
           armbian_board: "friendlyelec-rk3588"
           armbian_release: "noble"
-
-          # Rockchip BSP 6.1 内核
           armbian_kernel_branch: "vendor"
-
-          # GNOME 桌面
           armbian_ui: "gnome"
 
           armbian_compress: "sha,img,xz"
 
-          armbian_release_tag: "m6v2-noble-vendor-patched-${{ github.run_number }}"
-          armbian_release_title: "NanoPi M6V2 Ubuntu 24.04 GNOME Vendor Patched"
+          armbian_release_tag: "m6v2-armbian-friendlyelec-${{ github.run_number }}"
+          armbian_release_title: "NanoPi M6V2 Armbian 24.04 GNOME FriendlyELEC 6.1"
+          armbian_release_body: |
+            Armbian Ubuntu 24.04 GNOME image for NanoPi M6V2.
+
+            Kernel source:
+            friendlyarm/kernel-rockchip branch nanopi6-v6.1.y
+
+            Device tree:
+            rockchip/rk3588-nanopi6-rev0c.dtb
