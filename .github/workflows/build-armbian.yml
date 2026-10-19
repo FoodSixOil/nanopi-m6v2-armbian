@@ -1,4 +1,4 @@
-name: Build NanoPi M6V2 Armbian 24.04 Vendor
+name: Build NanoPi M6V2 Vendor Patched
 
 on:
   workflow_dispatch:
@@ -7,41 +7,36 @@ permissions:
   contents: write
 
 concurrency:
-  group: nanopi-m6v2-noble-vendor
+  group: nanopi-m6v2-noble-vendor-patched
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build NanoPi M6V2 Ubuntu 24.04 GNOME Vendor
+    name: Build NanoPi M6V2 Ubuntu 24.04 GNOME Vendor Patched
     runs-on: ubuntu-24.04
     timeout-minutes: 360
 
     steps:
-      - name: Build Armbian vendor image
+      - name: Build patched Armbian vendor image
         uses: armbian/build@main
         with:
           armbian_token: ${{ secrets.GITHUB_TOKEN }}
           armbian_runner_clean: "yes"
           armbian_target: "build"
 
-          # 使用已经合并 M6V2 支持的正式主线
-          armbian_branch: "main"
+          # 使用包含 ES8389 配置的 Armbian 构建 PR
+          armbian_branch: "refs/pull/10980/head"
 
-          # NanoPi M6V2 所属统一 RK3588 板型
           armbian_board: "friendlyelec-rk3588"
-
-          # Ubuntu 24.04 LTS
           armbian_release: "noble"
 
-          # Rockchip BSP 6.1 vendor 内核
+          # Rockchip BSP 6.1 内核
           armbian_kernel_branch: "vendor"
 
-          # GNOME 图形桌面
+          # GNOME 桌面
           armbian_ui: "gnome"
 
-          # 生成镜像、压缩包和校验文件
           armbian_compress: "sha,img,xz"
 
-          # 自动发布到 GitHub Releases
-          armbian_release_tag: "m6v2-noble-vendor-${{ github.run_number }}"
-          armbian_release_title: "NanoPi M6V2 Ubuntu 24.04 GNOME Vendor"
+          armbian_release_tag: "m6v2-noble-vendor-patched-${{ github.run_number }}"
+          armbian_release_title: "NanoPi M6V2 Ubuntu 24.04 GNOME Vendor Patched"
